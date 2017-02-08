@@ -1,0 +1,19 @@
+language: go
+
+sudo: required
+
+go:
+    - 1.7
+    - tip
+
+matrix:
+    allow_failures:
+        - go:tip
+    fast_finish: true
+
+before_install:
+    - curl -L https://git.io/vMZjG | sh
+before_script: make install
+script:
+    - make test
+    - make cs
