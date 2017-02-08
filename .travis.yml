@@ -16,5 +16,5 @@ before_install:
     - curl -L https://git.io/vMZjG | sh -s $HOME/bin
 before_script: make install
 script:
-    - make test
+    - make VERBOSE=true test
     - make cs

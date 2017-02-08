@@ -1,6 +1,7 @@
 # Healthz
 
 [![Build Status](https://img.shields.io/travis/sagikazarmark/healthz.svg?style=flat-square)](https://travis-ci.org/sagikazarmark/healthz)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sagikazarmark/healthz?style=flat-square)](https://goreportcard.com/report/github.com/sagikazarmark/healthz)
 
 **Tools for checking service health.**
 

@@ -1,5 +1,6 @@
-GLIDE:=$(shell if which glide > /dev/null 2>&1; then echo "glide"; fi)
+GLIDE=$(shell if which glide > /dev/null 2>&1; then echo "glide"; fi)
 GO_SOURCE_FILES=$(shell find . -type f -name "*.go" -not -name "bindata.go" -not -path "./vendor/*")
+GO_PACKAGES=$(shell go list ./... | grep -v /vendor/)
 
 # Install dependencies locally, optionally using go get
 install:
@@ -17,8 +18,13 @@ clean:
 	@go clean
 
 # Run test suite
+# Run tests
 test:
-	@go test -v
+ifeq ($(VERBOSE), true)
+	@go test -v $(GO_PACKAGES)
+else
+	@go test $(GO_PACKAGES)
+endif
 
 # Check that all source files follow the Coding Style
 cs:
