@@ -12,6 +12,7 @@ matrix:
     fast_finish: true
 
 before_install:
+    - mkdir -p $HOME/bin
     - curl -L https://git.io/vMZjG | sh
 before_script: make install
 script:
