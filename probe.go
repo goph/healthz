@@ -21,8 +21,8 @@ func (p *Probe) Check() error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	for _, c := range p.checkers {
-		if err := c.Ping(); err != nil {
+	for _, checker := range p.checkers {
+		if err := checker.Ping(); err != nil {
 			return err
 		}
 	}

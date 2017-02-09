@@ -22,6 +22,7 @@ func TestProbe_Check(t *testing.T) {
 	probe := NewProbe(healthChecker)
 
 	assert.NoError(t, probe.Check())
+	healthChecker.AssertExpectations(t)
 }
 
 func TestProbe_Check_Fail(t *testing.T) {
@@ -37,4 +38,6 @@ func TestProbe_Check_Fail(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, ErrHealthCheckFailed, err)
+	healthChecker1.AssertExpectations(t)
+	healthChecker2.AssertExpectations(t)
 }

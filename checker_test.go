@@ -2,6 +2,8 @@ package healthz
 
 import (
 	"database/sql"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -25,25 +27,19 @@ func (hc *HealthCheckerMock) Ping() error {
 }
 
 func TestStatusHealthChecker_Type(t *testing.T) {
-	healthChecker := &StatusHealthChecker{
-		Status: true,
-	}
+	healthChecker := &StatusHealthChecker{}
 
 	assert.Equal(t, "Status", healthChecker.Type())
 }
 
 func TestStatusHealthChecker_Ping(t *testing.T) {
-	healthChecker := &StatusHealthChecker{
-		Status: true,
-	}
+	healthChecker := NewStatusHealthChecker(true)
 
 	assert.NoError(t, healthChecker.Ping())
 }
 
 func TestStatusHealthChecker_Ping_Fail(t *testing.T) {
-	healthChecker := &StatusHealthChecker{
-		Status: false,
-	}
+	healthChecker := NewStatusHealthChecker(false)
 
 	err := healthChecker.Ping()
 
@@ -51,12 +47,16 @@ func TestStatusHealthChecker_Ping_Fail(t *testing.T) {
 	assert.Equal(t, ErrHealthCheckFailed, err)
 }
 
-func TestDbHealthChecker_Type(t *testing.T) {
-	db, _ := sql.Open("mysql", "obviously_wrong")
+func TestStatusHealthChecker_SetStatus(t *testing.T) {
+	healthChecker := NewStatusHealthChecker(false)
 
-	healthChecker := &DbHealthChecker{
-		db: db,
-	}
+	healthChecker.SetStatus(true)
+
+	assert.NoError(t, healthChecker.Ping())
+}
+
+func TestDbHealthChecker_Type(t *testing.T) {
+	healthChecker := &DbHealthChecker{}
 
 	assert.Equal(t, "DatabasePing", healthChecker.Type())
 }
@@ -76,11 +76,42 @@ func TestDbHealthChecker_Ping_Fail(t *testing.T) {
 
 	require.NoError(t, err)
 
-	healthChecker := &DbHealthChecker{
-		db: db,
-	}
+	healthChecker := NewDbHealthChecker(db)
 
 	err = healthChecker.Ping()
 
 	assert.Error(t, err)
+}
+
+func TestHTTPHealthChecker_Type(t *testing.T) {
+	healthChecker := &HTTPHealthChecker{}
+
+	assert.Equal(t, "HTTPPing", healthChecker.Type())
+}
+
+func TestHTTPHealthChecker_Ping(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	}))
+	defer ts.Close()
+
+	healthChecker := NewHTTPHealthChecker(ts.URL)
+
+	assert.NoError(t, healthChecker.Ping())
+}
+
+func TestHTTPHealthChecker_Ping_Fail(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		w.Write([]byte("error"))
+	}))
+	defer ts.Close()
+
+	healthChecker := NewHTTPHealthChecker(ts.URL)
+
+	err := healthChecker.Ping()
+
+	assert.Error(t, err)
+	assert.Equal(t, ErrHealthCheckFailed, err)
 }

@@ -9,31 +9,30 @@ type HealthService struct {
 }
 
 // NewHealthService creates a new HealthService from user configured Probes
-func NewHealthService(livenessProbe *Probe, readinessProbe *Probe) http.Handler {
-	healthService := &HealthService{
+func NewHealthService(livenessProbe *Probe, readinessProbe *Probe) *HealthService {
+	return &HealthService{
 		LivenessProbe:  livenessProbe,
 		ReadinessProbe: readinessProbe,
 	}
+}
 
-	hmux := http.NewServeMux()
-
-	hmux.HandleFunc("/healthz", healthService.HealthStatus)
-	hmux.HandleFunc("/readiness", healthService.ReadinessStatus)
-
-	return hmux
+// RegisterMux registers HTTP Endpoints in a Mux
+func (s *HealthService) RegisterMux(mux *http.ServeMux) {
+	mux.HandleFunc("/healthz", s.HealthStatus)
+	mux.HandleFunc("/readiness", s.ReadinessStatus)
 }
 
 // HealthStatus checks if the application is healthy
-func (hs *HealthService) HealthStatus(w http.ResponseWriter, r *http.Request) {
-	hs.checkStatus(w, r, hs.LivenessProbe)
+func (s *HealthService) HealthStatus(w http.ResponseWriter, r *http.Request) {
+	s.checkStatus(w, r, s.LivenessProbe)
 }
 
 // ReadinessStatus checks if the app is ready for accepting request (eg. database is available as well)
-func (hs *HealthService) ReadinessStatus(w http.ResponseWriter, r *http.Request) {
-	hs.checkStatus(w, r, hs.ReadinessProbe)
+func (s *HealthService) ReadinessStatus(w http.ResponseWriter, r *http.Request) {
+	s.checkStatus(w, r, s.ReadinessProbe)
 }
 
-func (hs *HealthService) checkStatus(w http.ResponseWriter, r *http.Request, p *Probe) {
+func (s *HealthService) checkStatus(w http.ResponseWriter, r *http.Request, p *Probe) {
 	if err := p.Check(); err != nil {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		w.Write([]byte("error"))
