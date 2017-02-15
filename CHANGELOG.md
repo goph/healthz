@@ -7,6 +7,10 @@
 
 - http.Handler constructor
 
+### Changed
+
+- HealthService members are not exported anymore
+
 ### Removed
 
 - `HealthService.RegisterHandlers` method

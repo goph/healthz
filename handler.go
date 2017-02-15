@@ -2,21 +2,8 @@ package healthz
 
 import "net/http"
 
-// HealthService is the HTTP handler implementation which wraps the Probe and Checker logic
-type HealthService struct {
-	LivenessProbe  *Probe
-	ReadinessProbe *Probe
-}
-
-// NewHealthService creates a new HealthService from user configured Probes
-func NewHealthService(livenessProbe *Probe, readinessProbe *Probe) *HealthService {
-	return &HealthService{
-		LivenessProbe:  livenessProbe,
-		ReadinessProbe: readinessProbe,
-	}
-}
-
 // NewHealthServiceHandler creates an http.Handler from user configured Probes
+// The handler is a standard http.ServeMux
 func NewHealthServiceHandler(livenessProbe *Probe, readinessProbe *Probe) http.Handler {
 	healthService := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -29,15 +16,17 @@ func NewHealthServiceHandler(livenessProbe *Probe, readinessProbe *Probe) http.H
 
 // HealthStatus checks if the application is healthy
 func (s *HealthService) HealthStatus(w http.ResponseWriter, r *http.Request) {
-	s.checkStatus(w, r, s.LivenessProbe)
+	s.checkStatus(w, r, s.livenessProbe)
 }
 
 // ReadinessStatus checks if the app is ready for accepting request (eg. database is available as well)
 func (s *HealthService) ReadinessStatus(w http.ResponseWriter, r *http.Request) {
-	s.checkStatus(w, r, s.ReadinessProbe)
+	s.checkStatus(w, r, s.readinessProbe)
 }
 
+// Since both health check relies on probes, common logic for them is here
 func (s *HealthService) checkStatus(w http.ResponseWriter, r *http.Request, p *Probe) {
+	// If the probe fails, we return an error
 	if err := p.Check(); err != nil {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		w.Write([]byte("error"))
