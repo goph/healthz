@@ -8,7 +8,7 @@ go:
 
 before_install:
     - mkdir -p $HOME/bin
-    - curl -s https://raw.githubusercontent.com/sagikazarmark/traviscripts/ec564622e9d92bd66df3e6d80ab8c45ab5483046/scripts/glide.sh | bash
+    - curl -s https://raw.githubusercontent.com/sagikazarmark/traviscripts/e106b6d593915a0cb736919ecb3804e8eb5e0440/scripts/glide.sh | bash
 
 before_script: make install
 
