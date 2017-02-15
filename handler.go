@@ -16,12 +16,6 @@ func NewHealthService(livenessProbe *Probe, readinessProbe *Probe) *HealthServic
 	}
 }
 
-// RegisterHandlers registers HTTP Endpoints in a Mux
-func (s *HealthService) RegisterHandlers(mux *http.ServeMux) {
-	mux.HandleFunc("/healthz", s.HealthStatus)
-	mux.HandleFunc("/readiness", s.ReadinessStatus)
-}
-
 // HealthStatus checks if the application is healthy
 func (s *HealthService) HealthStatus(w http.ResponseWriter, r *http.Request) {
 	s.checkStatus(w, r, s.LivenessProbe)

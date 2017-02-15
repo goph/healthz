@@ -1,6 +1,13 @@
 # Change Log
 
 
+## UNRELEASED
+
+### Removed
+
+- `HealthService.RegisterHandlers` method
+
+
 ## 0.3.0 - 2017-02-09
 
 ### Changed

@@ -18,7 +18,7 @@ func TestHealthService_HealthStatus(t *testing.T) {
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
-	service.RegisterHandlers(mux)
+	mux.HandleFunc("/healthz", service.HealthStatus)
 
 	req := httptest.NewRequest("GET", "/healthz", nil)
 	w := httptest.NewRecorder()
@@ -38,7 +38,7 @@ func TestHealthService_HealthStatus_Fail(t *testing.T) {
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
-	service.RegisterHandlers(mux)
+	mux.HandleFunc("/healthz", service.HealthStatus)
 
 	req := httptest.NewRequest("GET", "/healthz", nil)
 	w := httptest.NewRecorder()
@@ -58,7 +58,7 @@ func TestHealthService_ReadinessStatus(t *testing.T) {
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
-	service.RegisterHandlers(mux)
+	mux.HandleFunc("/readiness", service.ReadinessStatus)
 
 	req := httptest.NewRequest("GET", "/readiness", nil)
 	w := httptest.NewRecorder()
@@ -78,7 +78,7 @@ func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
-	service.RegisterHandlers(mux)
+	mux.HandleFunc("/readiness", service.ReadinessStatus)
 
 	req := httptest.NewRequest("GET", "/readiness", nil)
 	w := httptest.NewRecorder()
