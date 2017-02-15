@@ -17,7 +17,7 @@ func TestNewProbe(t *testing.T) {
 func TestProbe_Check(t *testing.T) {
 	healthChecker := new(HealthCheckerMock)
 
-	healthChecker.On("Ping").Return(nil)
+	healthChecker.On("Check").Return(nil)
 
 	probe := NewProbe(healthChecker)
 
@@ -29,8 +29,8 @@ func TestProbe_Check_Fail(t *testing.T) {
 	healthChecker1 := new(HealthCheckerMock)
 	healthChecker2 := new(HealthCheckerMock)
 
-	healthChecker1.On("Ping").Return(nil)
-	healthChecker2.On("Ping").Return(ErrHealthCheckFailed)
+	healthChecker1.On("Check").Return(nil)
+	healthChecker2.On("Check").Return(ErrHealthCheckFailed)
 
 	probe := NewProbe(healthChecker1, healthChecker2)
 

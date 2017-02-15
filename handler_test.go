@@ -14,7 +14,7 @@ func TestHealthService_HealthStatus(t *testing.T) {
 	livenessProbe := NewProbe(healthChecker)
 	readinessProbe := new(Probe)
 
-	healthChecker.On("Ping").Return(nil)
+	healthChecker.On("Check").Return(nil)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -34,7 +34,7 @@ func TestHealthService_HealthStatus_Fail(t *testing.T) {
 	livenessProbe := NewProbe(healthChecker)
 	readinessProbe := new(Probe)
 
-	healthChecker.On("Ping").Return(ErrHealthCheckFailed)
+	healthChecker.On("Check").Return(ErrHealthCheckFailed)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -54,7 +54,7 @@ func TestHealthService_ReadinessStatus(t *testing.T) {
 	livenessProbe := new(Probe)
 	readinessProbe := NewProbe(healthChecker)
 
-	healthChecker.On("Ping").Return(nil)
+	healthChecker.On("Check").Return(nil)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -74,7 +74,7 @@ func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
 	livenessProbe := new(Probe)
 	readinessProbe := NewProbe(healthChecker)
 
-	healthChecker.On("Ping").Return(ErrHealthCheckFailed)
+	healthChecker.On("Check").Return(ErrHealthCheckFailed)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()

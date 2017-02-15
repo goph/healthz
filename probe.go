@@ -22,7 +22,7 @@ func (p *Probe) Check() error {
 	defer p.mu.Unlock()
 
 	for _, checker := range p.checkers {
-		if err := checker.Ping(); err != nil {
+		if err := checker.Check(); err != nil {
 			return err
 		}
 	}

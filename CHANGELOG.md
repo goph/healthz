@@ -10,6 +10,7 @@
 ### Changed
 
 - HealthService members are not exported anymore
+- Rename `Ping` to `Check`
 
 ### Removed
 

@@ -13,7 +13,7 @@ var ErrHealthCheckFailed = errors.New("Health check failed")
 // HealthChecker is responsible for checking certain resources
 type HealthChecker interface {
 	Type() string
-	Ping() error
+	Check() error
 }
 
 // StatusHealthChecker checks the status based on an internal state
@@ -35,8 +35,8 @@ func (c *StatusHealthChecker) Type() string {
 	return "Status"
 }
 
-// Ping checks the internal status and returns an error if it is false
-func (c *StatusHealthChecker) Ping() error {
+// Check checks the internal status and returns an error if it is false
+func (c *StatusHealthChecker) Check() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -71,8 +71,8 @@ func (c *DbHealthChecker) Type() string {
 	return "DatabasePing"
 }
 
-// Ping checks the database status by pinging it
-func (c *DbHealthChecker) Ping() error {
+// Check checks the database status by pinging it
+func (c *DbHealthChecker) Check() error {
 	return c.db.Ping()
 }
 
@@ -93,8 +93,8 @@ func (c *HTTPHealthChecker) Type() string {
 	return "HTTPPing"
 }
 
-// Ping checks the database status by pinging it
-func (c *HTTPHealthChecker) Ping() error {
+// Check checks the database status by pinging it
+func (c *HTTPHealthChecker) Check() error {
 	resp, err := http.Get(c.url)
 	if err != nil {
 		return err
