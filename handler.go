@@ -16,6 +16,17 @@ func NewHealthService(livenessProbe *Probe, readinessProbe *Probe) *HealthServic
 	}
 }
 
+// NewHealthServiceHandler creates an http.Handler from user configured Probes
+func NewHealthServiceHandler(livenessProbe *Probe, readinessProbe *Probe) http.Handler {
+	healthService := NewHealthService(livenessProbe, readinessProbe)
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/healthz", healthService.HealthStatus)
+	mux.HandleFunc("/readiness", healthService.ReadinessStatus)
+
+	return mux
+}
+
 // HealthStatus checks if the application is healthy
 func (s *HealthService) HealthStatus(w http.ResponseWriter, r *http.Request) {
 	s.checkStatus(w, r, s.LivenessProbe)

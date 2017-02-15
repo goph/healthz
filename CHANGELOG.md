@@ -3,6 +3,10 @@
 
 ## UNRELEASED
 
+### Added
+
+- http.Handler constructor
+
 ### Removed
 
 - `HealthService.RegisterHandlers` method
