@@ -7,8 +7,8 @@ import (
 	"sync"
 )
 
-// ErrHealthCheckFailed is a generic error returned when a check fails
-var ErrHealthCheckFailed = errors.New("Health check failed")
+// ErrCheckFailed is a generic error returned when a check fails
+var ErrCheckFailed = errors.New("Health check failed")
 
 // HealthChecker is responsible for checking certain resources
 type HealthChecker interface {
@@ -44,7 +44,7 @@ func (c *StatusHealthChecker) Check() error {
 		return nil
 	}
 
-	return ErrHealthCheckFailed
+	return ErrCheckFailed
 }
 
 // SetStatus sets the internal status
@@ -101,7 +101,7 @@ func (c *HTTPHealthChecker) Check() error {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrHealthCheckFailed
+		return ErrCheckFailed
 	}
 
 	return nil

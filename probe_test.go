@@ -30,14 +30,14 @@ func TestProbe_Check_Fail(t *testing.T) {
 	healthChecker2 := new(HealthCheckerMock)
 
 	healthChecker1.On("Check").Return(nil)
-	healthChecker2.On("Check").Return(ErrHealthCheckFailed)
+	healthChecker2.On("Check").Return(ErrCheckFailed)
 
 	probe := NewProbe(healthChecker1, healthChecker2)
 
 	err := probe.Check()
 
 	assert.Error(t, err)
-	assert.Equal(t, ErrHealthCheckFailed, err)
+	assert.Equal(t, ErrCheckFailed, err)
 	healthChecker1.AssertExpectations(t)
 	healthChecker2.AssertExpectations(t)
 }

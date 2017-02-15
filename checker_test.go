@@ -44,7 +44,7 @@ func TestStatusHealthChecker_Check_Fail(t *testing.T) {
 	err := healthChecker.Check()
 
 	assert.Error(t, err)
-	assert.Equal(t, ErrHealthCheckFailed, err)
+	assert.Equal(t, ErrCheckFailed, err)
 }
 
 func TestStatusHealthChecker_SetStatus(t *testing.T) {
@@ -113,5 +113,5 @@ func TestHTTPHealthChecker_Check_Fail(t *testing.T) {
 	err := healthChecker.Check()
 
 	assert.Error(t, err)
-	assert.Equal(t, ErrHealthCheckFailed, err)
+	assert.Equal(t, ErrCheckFailed, err)
 }
