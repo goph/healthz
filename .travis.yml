@@ -1,20 +1,15 @@
 language: go
 
-sudo: required
+sudo: false
 
 go:
-    - 1.7
+    - 1.7.x
     - tip
-
-matrix:
-    allow_failures:
-        - go:tip
-    fast_finish: true
 
 before_install:
     - mkdir -p $HOME/bin
-    - curl -L https://git.io/vMZjG | sh -s $HOME/bin
+    - curl -s https://raw.githubusercontent.com/sagikazarmark/traviscripts/ec564622e9d92bd66df3e6d80ab8c45ab5483046/scripts/glide.sh | bash
+
 before_script: make install
-script:
-    - make VERBOSE=true test
-    - make cs
+
+script: make check
