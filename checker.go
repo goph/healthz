@@ -45,6 +45,14 @@ func (c *Checkers) Check() error {
 	return nil
 }
 
+// CheckFunc is a convenience type to create functions that implement the Checker interface
+type CheckFunc func() error
+
+// Check implements the Checker interface and allows any func() error signatured method to be passed as a Checker
+func (f CheckFunc) Check() error {
+	return f()
+}
+
 // Status is an enum type representing health status
 type Status int
 

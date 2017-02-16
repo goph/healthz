@@ -8,6 +8,7 @@
 - http.Handler constructor
 - Status enum with `Healthy` and `Unhealthy` values
 - Checker collection implementing the `Checker` interface
+- `CheckFunc` to allow any func implementing a specific signature become a Checker
 
 ### Changed
 

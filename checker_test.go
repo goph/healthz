@@ -14,7 +14,7 @@ func assertSuccessfulChecker(t *testing.T, checker healthz.Checker) {
 	err := checker.Check()
 
 	if err != nil {
-		t.Fatalf("Received unexpected error %+v", err)
+		t.Fatalf("Received unexpected error: %+v", err)
 	}
 }
 
@@ -42,6 +42,22 @@ func TestCheckers_Check_Fail(t *testing.T) {
 	checkers := healthz.NewCheckers(checker1, checker2)
 
 	assertFailedChecker(t, checkers)
+}
+
+func TestCheckerFunc_Check(t *testing.T) {
+	checker := healthz.CheckFunc(func() error {
+		return nil
+	})
+
+	assertSuccessfulChecker(t, checker)
+}
+
+func TestCheckerFunc_Check_Fail(t *testing.T) {
+	checker := healthz.CheckFunc(func() error {
+		return healthz.ErrCheckFailed
+	})
+
+	assertFailedChecker(t, checker)
 }
 
 func TestStatusChecker_Check(t *testing.T) {
