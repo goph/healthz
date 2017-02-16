@@ -7,6 +7,7 @@
 
 - http.Handler constructor
 - Status enum with `Healthy` and `Unhealthy` values
+- Checker collection implementing the `Checker` interface
 
 ### Changed
 

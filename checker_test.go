@@ -22,6 +22,34 @@ func (c *CheckerMock) Check() error {
 	return args.Error(0)
 }
 
+func TestCheckers_Check(t *testing.T) {
+	checker := new(CheckerMock)
+
+	checker.On("Check").Return(nil)
+
+	checkers := NewCheckers(checker)
+
+	assert.NoError(t, checkers.Check())
+	checker.AssertExpectations(t)
+}
+
+func TestCheckers_Check_Fail(t *testing.T) {
+	checker1 := new(CheckerMock)
+	checker2 := new(CheckerMock)
+
+	checker1.On("Check").Return(nil)
+	checker2.On("Check").Return(ErrCheckFailed)
+
+	checkers := NewCheckers(checker1, checker2)
+
+	err := checkers.Check()
+
+	assert.Error(t, err)
+	assert.Equal(t, ErrCheckFailed, err)
+	checker1.AssertExpectations(t)
+	checker2.AssertExpectations(t)
+}
+
 func TestStatusChecker_Check(t *testing.T) {
 	checker := NewStatusChecker(Healthy)
 

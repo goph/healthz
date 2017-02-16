@@ -16,6 +16,35 @@ type Checker interface {
 	Check() error
 }
 
+// Checkers a Checker collection responsible for executing a series of checks and decide if the resource is up or not
+type Checkers struct {
+	checkers []Checker
+	mu       *sync.Mutex
+}
+
+// NewCheckers is a shortcut for easily creating a new Checker collection
+func NewCheckers(checkers ...Checker) *Checkers {
+	return &Checkers{
+		checkers: checkers,
+		mu:       new(sync.Mutex),
+	}
+}
+
+// Check implements the Checker interface and executes the underlying checks
+// Note that since we have no information about what may become a Checker, this cannot be called concurrently
+func (c *Checkers) Check() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	for _, checker := range c.checkers {
+		if err := checker.Check(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Status is an enum type representing health status
 type Status int
 
