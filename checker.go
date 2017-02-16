@@ -16,14 +16,23 @@ type Checker interface {
 	Check() error
 }
 
+// Status is an enum type representing health status
+type Status int
+
+// Possibly values are Health and Unhealthy
+const (
+	Healthy Status = iota
+	Unhealthy
+)
+
 // StatusChecker checks the status based on an internal state
 type StatusChecker struct {
-	status bool
+	status Status
 	mu     *sync.Mutex
 }
 
 // NewStatusChecker creates a new StatusChecker with an initial state
-func NewStatusChecker(status bool) *StatusChecker {
+func NewStatusChecker(status Status) *StatusChecker {
 	return &StatusChecker{
 		status: status,
 		mu:     &sync.Mutex{},
@@ -36,7 +45,7 @@ func (c *StatusChecker) Check() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	if c.status {
+	if c.status == Healthy {
 		return nil
 	}
 
@@ -44,7 +53,7 @@ func (c *StatusChecker) Check() error {
 }
 
 // SetStatus sets the internal state
-func (c *StatusChecker) SetStatus(status bool) {
+func (c *StatusChecker) SetStatus(status Status) {
 	c.mu.Lock()
 	c.status = status
 	c.mu.Unlock()

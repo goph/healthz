@@ -6,6 +6,7 @@
 ### Added
 
 - http.Handler constructor
+- Status enum with `Healthy` and `Unhealthy` values
 
 ### Changed
 

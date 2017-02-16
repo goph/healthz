@@ -23,13 +23,13 @@ func (c *CheckerMock) Check() error {
 }
 
 func TestStatusChecker_Check(t *testing.T) {
-	checker := NewStatusChecker(true)
+	checker := NewStatusChecker(Healthy)
 
 	assert.NoError(t, checker.Check())
 }
 
 func TestStatusChecker_Check_Fail(t *testing.T) {
-	checker := NewStatusChecker(false)
+	checker := NewStatusChecker(Unhealthy)
 
 	err := checker.Check()
 
@@ -38,9 +38,9 @@ func TestStatusChecker_Check_Fail(t *testing.T) {
 }
 
 func TestStatusChecker_SetStatus(t *testing.T) {
-	checker := NewStatusChecker(false)
+	checker := NewStatusChecker(Unhealthy)
 
-	checker.SetStatus(true)
+	checker.SetStatus(Healthy)
 
 	assert.NoError(t, checker.Check())
 }
