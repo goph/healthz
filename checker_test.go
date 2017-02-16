@@ -16,20 +16,10 @@ type CheckerMock struct {
 	mock.Mock
 }
 
-func (c *CheckerMock) Type() string {
-	return "Mock"
-}
-
 func (c *CheckerMock) Check() error {
 	args := c.Called()
 
 	return args.Error(0)
-}
-
-func TestStatusChecker_Type(t *testing.T) {
-	checker := &StatusChecker{}
-
-	assert.Equal(t, "Status", checker.Type())
 }
 
 func TestStatusChecker_Check(t *testing.T) {
@@ -55,12 +45,6 @@ func TestStatusChecker_SetStatus(t *testing.T) {
 	assert.NoError(t, checker.Check())
 }
 
-func TestDbChecker_Type(t *testing.T) {
-	checker := &DbChecker{}
-
-	assert.Equal(t, "DatabasePing", checker.Type())
-}
-
 // func TestDbChecker_Check(t *testing.T) {
 // 	db, _ := sql.Open("mysql", "obviously_wrong")
 
@@ -81,12 +65,6 @@ func TestDbChecker_Check_Fail(t *testing.T) {
 	err = checker.Check()
 
 	assert.Error(t, err)
-}
-
-func TestHTTPChecker_Type(t *testing.T) {
-	checker := &HTTPChecker{}
-
-	assert.Equal(t, "HTTPPing", checker.Type())
 }
 
 func TestHTTPChecker_Check(t *testing.T) {

@@ -12,7 +12,6 @@ var ErrCheckFailed = errors.New("Health check failed")
 
 // Checker is responsible for checking certain resources
 type Checker interface {
-	Type() string
 	Check() error
 }
 
@@ -28,11 +27,6 @@ func NewStatusChecker(status bool) *StatusChecker {
 		status: status,
 		mu:     &sync.Mutex{},
 	}
-}
-
-// Type returns the name of the status checker
-func (c *StatusChecker) Type() string {
-	return "Status"
 }
 
 // Check checks the internal status and returns an error if it is false
@@ -66,11 +60,6 @@ func NewDbChecker(db *sql.DB) *DbChecker {
 	}
 }
 
-// Type returns the name of the database checker
-func (c *DbChecker) Type() string {
-	return "DatabasePing"
-}
-
 // Check checks the database status by pinging it
 func (c *DbChecker) Check() error {
 	return c.db.Ping()
@@ -86,11 +75,6 @@ func NewHTTPChecker(url string) *HTTPChecker {
 	return &HTTPChecker{
 		url: url,
 	}
-}
-
-// Type returns the name of the HTTP checker
-func (c *HTTPChecker) Type() string {
-	return "HTTPPing"
 }
 
 // Check checks the HTTP service status

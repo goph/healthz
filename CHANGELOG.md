@@ -17,6 +17,7 @@
 ### Removed
 
 - `HealthService.RegisterHandlers` method
+- `Type` method from `Checker` interface
 
 
 ## 0.3.0 - 2017-02-09
