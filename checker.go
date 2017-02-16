@@ -16,7 +16,7 @@ type Checker interface {
 	Check() error
 }
 
-// Checkers a Checker collection responsible for executing a series of checks and decide if the resource is up or not
+// Checkers is a Checker collection responsible for executing a series of checks and decide if the resource is up or not
 type Checkers struct {
 	checkers []Checker
 	mu       *sync.Mutex
@@ -105,19 +105,19 @@ func (c *DbChecker) Check() error {
 	return c.db.Ping()
 }
 
-// HTTPChecker checks if an HTTP service is available
+// HTTPChecker checks if an HTTP endpoint is available
 type HTTPChecker struct {
 	url string
 }
 
-// NewHTTPChecker creates a new HTTPChecker with an URL
+// NewHTTPChecker creates a new HTTPChecker with a URL
 func NewHTTPChecker(url string) *HTTPChecker {
 	return &HTTPChecker{
 		url: url,
 	}
 }
 
-// Check implements the Checker interface and checks the HTTP service status
+// Check implements the Checker interface and checks the HTTP endpoint status
 func (c *HTTPChecker) Check() error {
 	resp, err := http.Get(c.url)
 	if err != nil {
