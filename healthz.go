@@ -1,16 +1,16 @@
 // Package healthz provides tools for service health checks
 package healthz
 
-// HealthService is the implementation which wraps the Probe and Checker logic
+// HealthService wraps two Checkers and exposes them as HTTP handlers
 type HealthService struct {
-	livenessProbe  *Probe
-	readinessProbe *Probe
+	livenessChecker  Checker
+	readinessChecker Checker
 }
 
-// NewHealthService creates a new HealthService from user configured Probes
-func NewHealthService(livenessProbe *Probe, readinessProbe *Probe) *HealthService {
+// NewHealthService creates a new HealthService from user configured Checkers
+func NewHealthService(livenessChecker Checker, readinessChecker Checker) *HealthService {
 	return &HealthService{
-		livenessProbe:  livenessProbe,
-		readinessProbe: readinessProbe,
+		livenessChecker:  livenessChecker,
+		readinessChecker: readinessChecker,
 	}
 }
