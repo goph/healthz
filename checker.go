@@ -8,10 +8,11 @@ import (
 )
 
 // ErrCheckFailed is a generic error returned when a check fails
-var ErrCheckFailed = errors.New("Health check failed")
+var ErrCheckFailed = errors.New("Check failed")
 
-// Checker is responsible for checking certain resources
+// Checker is the interface for checking different resources
 type Checker interface {
+	// Returns nil if the check passes
 	Check() error
 }
 
@@ -21,7 +22,7 @@ type StatusChecker struct {
 	mu     *sync.Mutex
 }
 
-// NewStatusChecker creates a new status checker with an initial status
+// NewStatusChecker creates a new StatusChecker with an initial state
 func NewStatusChecker(status bool) *StatusChecker {
 	return &StatusChecker{
 		status: status,
@@ -29,7 +30,8 @@ func NewStatusChecker(status bool) *StatusChecker {
 	}
 }
 
-// Check checks the internal status and returns an error if it is false
+// Check implements the Checker interface and checks the internal state
+// Returns an error if the state is false
 func (c *StatusChecker) Check() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -41,7 +43,7 @@ func (c *StatusChecker) Check() error {
 	return ErrCheckFailed
 }
 
-// SetStatus sets the internal status
+// SetStatus sets the internal state
 func (c *StatusChecker) SetStatus(status bool) {
 	c.mu.Lock()
 	c.status = status
@@ -53,14 +55,14 @@ type DbChecker struct {
 	db *sql.DB
 }
 
-// NewDbChecker creates a new DB checker with a connection
+// NewDbChecker creates a new DBChecker with a DB connection
 func NewDbChecker(db *sql.DB) *DbChecker {
 	return &DbChecker{
 		db: db,
 	}
 }
 
-// Check checks the database status by pinging it
+// Check implements the Checker interface and checks the database status by pinging it
 func (c *DbChecker) Check() error {
 	return c.db.Ping()
 }
@@ -70,14 +72,14 @@ type HTTPChecker struct {
 	url string
 }
 
-// NewHTTPChecker creates a new HTTP checker with an URL
+// NewHTTPChecker creates a new HTTPChecker with an URL
 func NewHTTPChecker(url string) *HTTPChecker {
 	return &HTTPChecker{
 		url: url,
 	}
 }
 
-// Check checks the HTTP service status
+// Check implements the Checker interface and checks the HTTP service status
 func (c *HTTPChecker) Check() error {
 	resp, err := http.Get(c.url)
 	if err != nil {

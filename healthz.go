@@ -1,7 +1,7 @@
 // Package healthz provides tools for service health checks
 package healthz
 
-// HealthService is the mplementation which wraps the Probe and Checker logic
+// HealthService is the implementation which wraps the Probe and Checker logic
 type HealthService struct {
 	livenessProbe  *Probe
 	readinessProbe *Probe

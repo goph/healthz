@@ -24,7 +24,7 @@ func (s *HealthService) ReadinessStatus(w http.ResponseWriter, r *http.Request) 
 	s.checkStatus(w, r, s.readinessProbe)
 }
 
-// Since both health check relies on probes, common logic for them is here
+// Since both health check rely on probes, common logic for them is here
 func (s *HealthService) checkStatus(w http.ResponseWriter, r *http.Request, p *Probe) {
 	// If the probe fails, we return an error
 	if err := p.Check(); err != nil {

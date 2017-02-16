@@ -13,6 +13,7 @@
 - Rename `Ping` to `Check`
 - Rename `ErrHealthCheckFailed` to `ErrCheckFailed`
 - Rename `HealthChecker` to `Checker`
+- Improved comments
 
 ### Removed
 
