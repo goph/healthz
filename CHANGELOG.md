@@ -16,6 +16,7 @@
 - Rename `ErrHealthCheckFailed` to `ErrCheckFailed`
 - Rename `HealthChecker` to `Checker`
 - Improved comments
+- Moved tests to a separate package (see [here](https://medium.com/@povilasve/go-advanced-tips-tricks-a872503ac859#.ii6f9mgjv) why)
 
 ### Removed
 

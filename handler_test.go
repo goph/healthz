@@ -1,20 +1,20 @@
-package healthz
+package healthz_test
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"net/http"
-
+	"github.com/sagikazarmark/healthz"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHealthService_HealthStatus(t *testing.T) {
-	checker := new(AlwaysSuccessChecker)
-	livenessChecker := NewCheckers(checker)
-	readinessChecker := new(Checkers)
+	checker := new(healthz.AlwaysSuccessChecker)
+	livenessChecker := healthz.NewCheckers(checker)
+	readinessChecker := new(healthz.Checkers)
 
-	service := NewHealthService(livenessChecker, readinessChecker)
+	service := healthz.NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthz", service.HealthStatus)
 
@@ -27,11 +27,11 @@ func TestHealthService_HealthStatus(t *testing.T) {
 }
 
 func TestHealthService_HealthStatus_Fail(t *testing.T) {
-	checker := new(AlwaysFailureChecker)
-	livenessChecker := NewCheckers(checker)
-	readinessChecker := new(Checkers)
+	checker := new(healthz.AlwaysFailureChecker)
+	livenessChecker := healthz.NewCheckers(checker)
+	readinessChecker := new(healthz.Checkers)
 
-	service := NewHealthService(livenessChecker, readinessChecker)
+	service := healthz.NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthz", service.HealthStatus)
 
@@ -44,11 +44,11 @@ func TestHealthService_HealthStatus_Fail(t *testing.T) {
 }
 
 func TestHealthService_ReadinessStatus(t *testing.T) {
-	checker := new(AlwaysSuccessChecker)
-	livenessChecker := new(Checkers)
-	readinessChecker := NewCheckers(checker)
+	checker := new(healthz.AlwaysSuccessChecker)
+	livenessChecker := new(healthz.Checkers)
+	readinessChecker := healthz.NewCheckers(checker)
 
-	service := NewHealthService(livenessChecker, readinessChecker)
+	service := healthz.NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/readiness", service.ReadinessStatus)
 
@@ -61,11 +61,11 @@ func TestHealthService_ReadinessStatus(t *testing.T) {
 }
 
 func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
-	checker := new(AlwaysFailureChecker)
-	livenessChecker := new(Checkers)
-	readinessChecker := NewCheckers(checker)
+	checker := new(healthz.AlwaysFailureChecker)
+	livenessChecker := new(healthz.Checkers)
+	readinessChecker := healthz.NewCheckers(checker)
 
-	service := NewHealthService(livenessChecker, readinessChecker)
+	service := healthz.NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/readiness", service.ReadinessStatus)
 
