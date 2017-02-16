@@ -14,6 +14,28 @@ func assertStatusCodesEqual(t *testing.T, got int, want int) {
 	}
 }
 
+func TestNewHealthServiceHandler(t *testing.T) {
+	checker := new(healthz.AlwaysSuccessChecker)
+	livenessChecker := healthz.NewCheckers(checker)
+	readinessChecker := healthz.NewCheckers(checker)
+
+	mux := healthz.NewHealthServiceHandler(livenessChecker, readinessChecker)
+
+	req := httptest.NewRequest("GET", "/healthz", nil)
+	w := httptest.NewRecorder()
+
+	mux.ServeHTTP(w, req)
+
+	assertStatusCodesEqual(t, http.StatusOK, w.Code)
+
+	req = httptest.NewRequest("GET", "/readiness", nil)
+	w = httptest.NewRecorder()
+
+	mux.ServeHTTP(w, req)
+
+	assertStatusCodesEqual(t, http.StatusOK, w.Code)
+}
+
 func TestHealthService_HealthStatus(t *testing.T) {
 	checker := new(healthz.AlwaysSuccessChecker)
 	livenessChecker := healthz.NewCheckers(checker)
