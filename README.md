@@ -16,9 +16,9 @@ You need [Glide](http://glide.sh/) to install dependencies.
 
 `$ make install`
 
-Run tests:
+Run tests and linters:
 
-`$ make test`
+`$ make check`
 
 
 ## License
