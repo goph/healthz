@@ -6,8 +6,13 @@ import (
 	"testing"
 
 	"github.com/sagikazarmark/healthz"
-	"github.com/stretchr/testify/assert"
 )
+
+func assertStatusCodesEqual(t *testing.T, got int, want int) {
+	if got != want {
+		t.Fatalf("Expected status code %d, received %d", got, want)
+	}
+}
 
 func TestHealthService_HealthStatus(t *testing.T) {
 	checker := new(healthz.AlwaysSuccessChecker)
@@ -23,7 +28,7 @@ func TestHealthService_HealthStatus(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assertStatusCodesEqual(t, http.StatusOK, w.Code)
 }
 
 func TestHealthService_HealthStatus_Fail(t *testing.T) {
@@ -40,7 +45,7 @@ func TestHealthService_HealthStatus_Fail(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
+	assertStatusCodesEqual(t, http.StatusServiceUnavailable, w.Code)
 }
 
 func TestHealthService_ReadinessStatus(t *testing.T) {
@@ -57,7 +62,7 @@ func TestHealthService_ReadinessStatus(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assertStatusCodesEqual(t, http.StatusOK, w.Code)
 }
 
 func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
@@ -74,5 +79,5 @@ func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
 
 	mux.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
+	assertStatusCodesEqual(t, http.StatusServiceUnavailable, w.Code)
 }
