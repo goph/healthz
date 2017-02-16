@@ -4,12 +4,12 @@ import "sync"
 
 // Probe is responsible for executing a series of checks and decide if the service is up or not
 type Probe struct {
-	checkers []HealthChecker
+	checkers []Checker
 	mu       *sync.Mutex
 }
 
 // NewProbe is a shortcut for easily creating a new Probe
-func NewProbe(checkers ...HealthChecker) *Probe {
+func NewProbe(checkers ...Checker) *Probe {
 	return &Probe{
 		checkers: checkers,
 		mu:       &sync.Mutex{},

@@ -12,6 +12,7 @@
 - HealthService members are not exported anymore
 - Rename `Ping` to `Check`
 - Rename `ErrHealthCheckFailed` to `ErrCheckFailed`
+- Rename `HealthChecker` to `Checker`
 
 ### Removed
 

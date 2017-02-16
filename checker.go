@@ -10,33 +10,33 @@ import (
 // ErrCheckFailed is a generic error returned when a check fails
 var ErrCheckFailed = errors.New("Health check failed")
 
-// HealthChecker is responsible for checking certain resources
-type HealthChecker interface {
+// Checker is responsible for checking certain resources
+type Checker interface {
 	Type() string
 	Check() error
 }
 
-// StatusHealthChecker checks the status based on an internal state
-type StatusHealthChecker struct {
+// StatusChecker checks the status based on an internal state
+type StatusChecker struct {
 	status bool
 	mu     *sync.Mutex
 }
 
-// NewStatusHealthChecker creates a new status health checker with an initial status
-func NewStatusHealthChecker(status bool) *StatusHealthChecker {
-	return &StatusHealthChecker{
+// NewStatusChecker creates a new status checker with an initial status
+func NewStatusChecker(status bool) *StatusChecker {
+	return &StatusChecker{
 		status: status,
 		mu:     &sync.Mutex{},
 	}
 }
 
 // Type returns the name of the status checker
-func (c *StatusHealthChecker) Type() string {
+func (c *StatusChecker) Type() string {
 	return "Status"
 }
 
 // Check checks the internal status and returns an error if it is false
-func (c *StatusHealthChecker) Check() error {
+func (c *StatusChecker) Check() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -48,53 +48,53 @@ func (c *StatusHealthChecker) Check() error {
 }
 
 // SetStatus sets the internal status
-func (c *StatusHealthChecker) SetStatus(status bool) {
+func (c *StatusChecker) SetStatus(status bool) {
 	c.mu.Lock()
 	c.status = status
 	c.mu.Unlock()
 }
 
-// DbHealthChecker checks if a database is available through builtin database/sql
-type DbHealthChecker struct {
+// DbChecker checks if a database is available through builtin database/sql
+type DbChecker struct {
 	db *sql.DB
 }
 
-// NewDbHealthChecker creates a new DB health checker with a connection
-func NewDbHealthChecker(db *sql.DB) *DbHealthChecker {
-	return &DbHealthChecker{
+// NewDbChecker creates a new DB checker with a connection
+func NewDbChecker(db *sql.DB) *DbChecker {
+	return &DbChecker{
 		db: db,
 	}
 }
 
 // Type returns the name of the database checker
-func (c *DbHealthChecker) Type() string {
+func (c *DbChecker) Type() string {
 	return "DatabasePing"
 }
 
 // Check checks the database status by pinging it
-func (c *DbHealthChecker) Check() error {
+func (c *DbChecker) Check() error {
 	return c.db.Ping()
 }
 
-// HTTPHealthChecker checks if an HTTP service is available
-type HTTPHealthChecker struct {
+// HTTPChecker checks if an HTTP service is available
+type HTTPChecker struct {
 	url string
 }
 
-// NewHTTPHealthChecker creates a new HTTP health checker with an URL
-func NewHTTPHealthChecker(url string) *HTTPHealthChecker {
-	return &HTTPHealthChecker{
+// NewHTTPChecker creates a new HTTP checker with an URL
+func NewHTTPChecker(url string) *HTTPChecker {
+	return &HTTPChecker{
 		url: url,
 	}
 }
 
-// Type returns the name of the database checker
-func (c *HTTPHealthChecker) Type() string {
+// Type returns the name of the HTTP checker
+func (c *HTTPChecker) Type() string {
 	return "HTTPPing"
 }
 
-// Check checks the database status by pinging it
-func (c *HTTPHealthChecker) Check() error {
+// Check checks the HTTP service status
+func (c *HTTPChecker) Check() error {
 	resp, err := http.Get(c.url)
 	if err != nil {
 		return err

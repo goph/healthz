@@ -7,37 +7,37 @@ import (
 )
 
 func TestNewProbe(t *testing.T) {
-	healthChecker := new(HealthCheckerMock)
+	checker := new(CheckerMock)
 
-	probe := NewProbe(healthChecker)
+	probe := NewProbe(checker)
 
-	assert.Equal(t, healthChecker, probe.checkers[0])
+	assert.Equal(t, checker, probe.checkers[0])
 }
 
 func TestProbe_Check(t *testing.T) {
-	healthChecker := new(HealthCheckerMock)
+	checker := new(CheckerMock)
 
-	healthChecker.On("Check").Return(nil)
+	checker.On("Check").Return(nil)
 
-	probe := NewProbe(healthChecker)
+	probe := NewProbe(checker)
 
 	assert.NoError(t, probe.Check())
-	healthChecker.AssertExpectations(t)
+	checker.AssertExpectations(t)
 }
 
 func TestProbe_Check_Fail(t *testing.T) {
-	healthChecker1 := new(HealthCheckerMock)
-	healthChecker2 := new(HealthCheckerMock)
+	checker1 := new(CheckerMock)
+	checker2 := new(CheckerMock)
 
-	healthChecker1.On("Check").Return(nil)
-	healthChecker2.On("Check").Return(ErrCheckFailed)
+	checker1.On("Check").Return(nil)
+	checker2.On("Check").Return(ErrCheckFailed)
 
-	probe := NewProbe(healthChecker1, healthChecker2)
+	probe := NewProbe(checker1, checker2)
 
 	err := probe.Check()
 
 	assert.Error(t, err)
 	assert.Equal(t, ErrCheckFailed, err)
-	healthChecker1.AssertExpectations(t)
-	healthChecker2.AssertExpectations(t)
+	checker1.AssertExpectations(t)
+	checker2.AssertExpectations(t)
 }

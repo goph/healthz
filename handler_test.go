@@ -10,11 +10,11 @@ import (
 )
 
 func TestHealthService_HealthStatus(t *testing.T) {
-	healthChecker := new(HealthCheckerMock)
-	livenessProbe := NewProbe(healthChecker)
+	checker := new(CheckerMock)
+	livenessProbe := NewProbe(checker)
 	readinessProbe := new(Probe)
 
-	healthChecker.On("Check").Return(nil)
+	checker.On("Check").Return(nil)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -26,15 +26,15 @@ func TestHealthService_HealthStatus(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	healthChecker.AssertExpectations(t)
+	checker.AssertExpectations(t)
 }
 
 func TestHealthService_HealthStatus_Fail(t *testing.T) {
-	healthChecker := new(HealthCheckerMock)
-	livenessProbe := NewProbe(healthChecker)
+	checker := new(CheckerMock)
+	livenessProbe := NewProbe(checker)
 	readinessProbe := new(Probe)
 
-	healthChecker.On("Check").Return(ErrCheckFailed)
+	checker.On("Check").Return(ErrCheckFailed)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -46,15 +46,15 @@ func TestHealthService_HealthStatus_Fail(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
-	healthChecker.AssertExpectations(t)
+	checker.AssertExpectations(t)
 }
 
 func TestHealthService_ReadinessStatus(t *testing.T) {
-	healthChecker := new(HealthCheckerMock)
+	checker := new(CheckerMock)
 	livenessProbe := new(Probe)
-	readinessProbe := NewProbe(healthChecker)
+	readinessProbe := NewProbe(checker)
 
-	healthChecker.On("Check").Return(nil)
+	checker.On("Check").Return(nil)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -66,15 +66,15 @@ func TestHealthService_ReadinessStatus(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	healthChecker.AssertExpectations(t)
+	checker.AssertExpectations(t)
 }
 
 func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
-	healthChecker := new(HealthCheckerMock)
+	checker := new(CheckerMock)
 	livenessProbe := new(Probe)
-	readinessProbe := NewProbe(healthChecker)
+	readinessProbe := NewProbe(checker)
 
-	healthChecker.On("Check").Return(ErrCheckFailed)
+	checker.On("Check").Return(ErrCheckFailed)
 
 	service := NewHealthService(livenessProbe, readinessProbe)
 	mux := http.NewServeMux()
@@ -86,5 +86,5 @@ func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
-	healthChecker.AssertExpectations(t)
+	checker.AssertExpectations(t)
 }

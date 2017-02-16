@@ -12,105 +12,105 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type HealthCheckerMock struct {
+type CheckerMock struct {
 	mock.Mock
 }
 
-func (hc *HealthCheckerMock) Type() string {
+func (c *CheckerMock) Type() string {
 	return "Mock"
 }
 
-func (hc *HealthCheckerMock) Check() error {
-	args := hc.Called()
+func (c *CheckerMock) Check() error {
+	args := c.Called()
 
 	return args.Error(0)
 }
 
-func TestStatusHealthChecker_Type(t *testing.T) {
-	healthChecker := &StatusHealthChecker{}
+func TestStatusChecker_Type(t *testing.T) {
+	checker := &StatusChecker{}
 
-	assert.Equal(t, "Status", healthChecker.Type())
+	assert.Equal(t, "Status", checker.Type())
 }
 
-func TestStatusHealthChecker_Check(t *testing.T) {
-	healthChecker := NewStatusHealthChecker(true)
+func TestStatusChecker_Check(t *testing.T) {
+	checker := NewStatusChecker(true)
 
-	assert.NoError(t, healthChecker.Check())
+	assert.NoError(t, checker.Check())
 }
 
-func TestStatusHealthChecker_Check_Fail(t *testing.T) {
-	healthChecker := NewStatusHealthChecker(false)
+func TestStatusChecker_Check_Fail(t *testing.T) {
+	checker := NewStatusChecker(false)
 
-	err := healthChecker.Check()
+	err := checker.Check()
 
 	assert.Error(t, err)
 	assert.Equal(t, ErrCheckFailed, err)
 }
 
-func TestStatusHealthChecker_SetStatus(t *testing.T) {
-	healthChecker := NewStatusHealthChecker(false)
+func TestStatusChecker_SetStatus(t *testing.T) {
+	checker := NewStatusChecker(false)
 
-	healthChecker.SetStatus(true)
+	checker.SetStatus(true)
 
-	assert.NoError(t, healthChecker.Check())
+	assert.NoError(t, checker.Check())
 }
 
-func TestDbHealthChecker_Type(t *testing.T) {
-	healthChecker := &DbHealthChecker{}
+func TestDbChecker_Type(t *testing.T) {
+	checker := &DbChecker{}
 
-	assert.Equal(t, "DatabasePing", healthChecker.Type())
+	assert.Equal(t, "DatabasePing", checker.Type())
 }
 
-// func TestDbHealthChecker_Check(t *testing.T) {
+// func TestDbChecker_Check(t *testing.T) {
 // 	db, _ := sql.Open("mysql", "obviously_wrong")
 
-// 	healthChecker := &DbHealthChecker{
+// 	checker := &DbChecker{
 // 		db: db,
 // 	}
 
-// 	//assert.NoError(t, healthChecker.Check())
+// 	//assert.NoError(t, checker.Check())
 // }
 
-func TestDbHealthChecker_Check_Fail(t *testing.T) {
+func TestDbChecker_Check_Fail(t *testing.T) {
 	db, err := sql.Open("mysql", "user:password@/dbname")
 
 	require.NoError(t, err)
 
-	healthChecker := NewDbHealthChecker(db)
+	checker := NewDbChecker(db)
 
-	err = healthChecker.Check()
+	err = checker.Check()
 
 	assert.Error(t, err)
 }
 
-func TestHTTPHealthChecker_Type(t *testing.T) {
-	healthChecker := &HTTPHealthChecker{}
+func TestHTTPChecker_Type(t *testing.T) {
+	checker := &HTTPChecker{}
 
-	assert.Equal(t, "HTTPPing", healthChecker.Type())
+	assert.Equal(t, "HTTPPing", checker.Type())
 }
 
-func TestHTTPHealthChecker_Check(t *testing.T) {
+func TestHTTPChecker_Check(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("ok"))
 	}))
 	defer ts.Close()
 
-	healthChecker := NewHTTPHealthChecker(ts.URL)
+	checker := NewHTTPChecker(ts.URL)
 
-	assert.NoError(t, healthChecker.Check())
+	assert.NoError(t, checker.Check())
 }
 
-func TestHTTPHealthChecker_Check_Fail(t *testing.T) {
+func TestHTTPChecker_Check_Fail(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		w.Write([]byte("error"))
 	}))
 	defer ts.Close()
 
-	healthChecker := NewHTTPHealthChecker(ts.URL)
+	checker := NewHTTPChecker(ts.URL)
 
-	err := healthChecker.Check()
+	err := checker.Check()
 
 	assert.Error(t, err)
 	assert.Equal(t, ErrCheckFailed, err)
