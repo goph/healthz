@@ -10,11 +10,9 @@ import (
 )
 
 func TestHealthService_HealthStatus(t *testing.T) {
-	checker := new(CheckerMock)
+	checker := new(AlwaysSuccessChecker)
 	livenessChecker := NewCheckers(checker)
 	readinessChecker := new(Checkers)
-
-	checker.On("Check").Return(nil)
 
 	service := NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
@@ -26,15 +24,12 @@ func TestHealthService_HealthStatus(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	checker.AssertExpectations(t)
 }
 
 func TestHealthService_HealthStatus_Fail(t *testing.T) {
-	checker := new(CheckerMock)
+	checker := new(AlwaysFailureChecker)
 	livenessChecker := NewCheckers(checker)
 	readinessChecker := new(Checkers)
-
-	checker.On("Check").Return(ErrCheckFailed)
 
 	service := NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
@@ -46,15 +41,12 @@ func TestHealthService_HealthStatus_Fail(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
-	checker.AssertExpectations(t)
 }
 
 func TestHealthService_ReadinessStatus(t *testing.T) {
-	checker := new(CheckerMock)
+	checker := new(AlwaysSuccessChecker)
 	livenessChecker := new(Checkers)
 	readinessChecker := NewCheckers(checker)
-
-	checker.On("Check").Return(nil)
 
 	service := NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
@@ -66,15 +58,12 @@ func TestHealthService_ReadinessStatus(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	checker.AssertExpectations(t)
 }
 
 func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
-	checker := new(CheckerMock)
+	checker := new(AlwaysFailureChecker)
 	livenessChecker := new(Checkers)
 	readinessChecker := NewCheckers(checker)
-
-	checker.On("Check").Return(ErrCheckFailed)
 
 	service := NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()
@@ -86,5 +75,4 @@ func TestHealthService_ReadinessStatus_Fail(t *testing.T) {
 	mux.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
-	checker.AssertExpectations(t)
 }

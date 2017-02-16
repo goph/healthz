@@ -8,37 +8,33 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-type CheckerMock struct {
-	mock.Mock
+type AlwaysSuccessChecker struct{}
+
+func (c *AlwaysSuccessChecker) Check() error {
+	return nil
 }
 
-func (c *CheckerMock) Check() error {
-	args := c.Called()
+type AlwaysFailureChecker struct{}
 
-	return args.Error(0)
+func (c *AlwaysFailureChecker) Check() error {
+	return ErrCheckFailed
 }
 
 func TestCheckers_Check(t *testing.T) {
-	checker := new(CheckerMock)
+	checker1 := new(AlwaysSuccessChecker)
+	checker2 := new(AlwaysSuccessChecker)
 
-	checker.On("Check").Return(nil)
-
-	checkers := NewCheckers(checker)
+	checkers := NewCheckers(checker1, checker2)
 
 	assert.NoError(t, checkers.Check())
-	checker.AssertExpectations(t)
 }
 
 func TestCheckers_Check_Fail(t *testing.T) {
-	checker1 := new(CheckerMock)
-	checker2 := new(CheckerMock)
-
-	checker1.On("Check").Return(nil)
-	checker2.On("Check").Return(ErrCheckFailed)
+	checker1 := new(AlwaysSuccessChecker)
+	checker2 := new(AlwaysFailureChecker)
 
 	checkers := NewCheckers(checker1, checker2)
 
@@ -46,8 +42,6 @@ func TestCheckers_Check_Fail(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, ErrCheckFailed, err)
-	checker1.AssertExpectations(t)
-	checker2.AssertExpectations(t)
 }
 
 func TestStatusChecker_Check(t *testing.T) {

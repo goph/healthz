@@ -22,6 +22,7 @@
 - `HealthService.RegisterHandlers` method
 - `Type` method from `Checker` interface
 - `Probe` in favor of `Checker` interface and collection
+- Mocked Checker
 
 
 ## 0.3.0 - 2017-02-09
