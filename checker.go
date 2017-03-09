@@ -1,7 +1,6 @@
 package healthz
 
 import (
-	"database/sql"
 	"errors"
 	"net/http"
 	"sync"
@@ -96,21 +95,26 @@ func (c *StatusChecker) SetStatus(status Status) {
 	c.mu.Unlock()
 }
 
-// DbChecker checks if a database is available through builtin database/sql
-type DbChecker struct {
-	db *sql.DB
+// Pinger is a commonly used interface to check if a connection is alive (used in sql.DB for example)
+type Pinger interface {
+	Ping() error
 }
 
-// NewDbChecker creates a new DBChecker with a DB connection
-func NewDbChecker(db *sql.DB) *DbChecker {
-	return &DbChecker{
-		db: db,
+// PingChecker checks if a database is available through builtin database/sql
+type PingChecker struct {
+	pinger Pinger
+}
+
+// NewPingChecker creates a new PingChecker with a DB connection
+func NewPingChecker(pinger Pinger) *PingChecker {
+	return &PingChecker{
+		pinger: pinger,
 	}
 }
 
 // Check implements the Checker interface and checks the database status by pinging it
-func (c *DbChecker) Check() error {
-	return c.db.Ping()
+func (c *PingChecker) Check() error {
+	return c.pinger.Ping()
 }
 
 // HTTPChecker checks if an HTTP endpoint is available
