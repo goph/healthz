@@ -1,10 +1,11 @@
 package healthz_test
 
 import (
-	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"errors"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/sagikazarmark/healthz"
@@ -80,24 +81,24 @@ func TestStatusChecker_SetStatus(t *testing.T) {
 	assertSuccessfulChecker(t, checker)
 }
 
-// func TestDbChecker_Check(t *testing.T) {
-// 	db, _ := sql.Open("mysql", "obviously_wrong")
+type PingerMock struct {
+	err error
+}
 
-// 	checker := healthz.NewDbChecker(db)
+func (p *PingerMock) Ping() error {
+	return p.err
+}
 
-// 	//assertSuccessfulChecker(t, checker)
-// }
+func TestPingChecker_Check(t *testing.T) {
+	checker := healthz.NewPingChecker(&PingerMock{})
 
-func TestDbChecker_Check_Fail(t *testing.T) {
-	db, err := sql.Open("mysql", "user:password@/dbname")
+	assertSuccessfulChecker(t, checker)
+}
 
-	if err != nil {
-		t.Fatalf("Received unexpected error %+v", err)
-	}
+func TestPingChecker_Check_Fail(t *testing.T) {
+	checker := healthz.NewPingChecker(&PingerMock{errors.New("ping failed")})
 
-	checker := healthz.NewDbChecker(db)
-
-	err = checker.Check()
+	err := checker.Check()
 
 	if err == nil {
 		t.Fatal("Expected error, none received")
