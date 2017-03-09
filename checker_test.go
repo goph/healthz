@@ -7,11 +7,10 @@ import (
 
 	"errors"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/sagikazarmark/healthz"
 )
 
-func assertSuccessfulChecker(t *testing.T, checker healthz.Checker) {
+func assertCheckerSuccessful(t *testing.T, checker healthz.Checker) {
 	err := checker.Check()
 
 	if err != nil {
@@ -19,7 +18,7 @@ func assertSuccessfulChecker(t *testing.T, checker healthz.Checker) {
 	}
 }
 
-func assertFailedChecker(t *testing.T, checker healthz.Checker) {
+func assertCheckerFailed(t *testing.T, checker healthz.Checker) {
 	err := checker.Check()
 
 	if err != healthz.ErrCheckFailed {
@@ -33,7 +32,7 @@ func TestCheckers_Check(t *testing.T) {
 
 	checkers := healthz.NewCheckers(checker1, checker2)
 
-	assertSuccessfulChecker(t, checkers)
+	assertCheckerSuccessful(t, checkers)
 }
 
 func TestCheckers_Check_Fail(t *testing.T) {
@@ -42,7 +41,7 @@ func TestCheckers_Check_Fail(t *testing.T) {
 
 	checkers := healthz.NewCheckers(checker1, checker2)
 
-	assertFailedChecker(t, checkers)
+	assertCheckerFailed(t, checkers)
 }
 
 func TestCheckerFunc_Check(t *testing.T) {
@@ -50,7 +49,7 @@ func TestCheckerFunc_Check(t *testing.T) {
 		return nil
 	})
 
-	assertSuccessfulChecker(t, checker)
+	assertCheckerSuccessful(t, checker)
 }
 
 func TestCheckerFunc_Check_Fail(t *testing.T) {
@@ -58,19 +57,19 @@ func TestCheckerFunc_Check_Fail(t *testing.T) {
 		return healthz.ErrCheckFailed
 	})
 
-	assertFailedChecker(t, checker)
+	assertCheckerFailed(t, checker)
 }
 
 func TestStatusChecker_Check(t *testing.T) {
 	checker := healthz.NewStatusChecker(healthz.Healthy)
 
-	assertSuccessfulChecker(t, checker)
+	assertCheckerSuccessful(t, checker)
 }
 
 func TestStatusChecker_Check_Fail(t *testing.T) {
 	checker := healthz.NewStatusChecker(healthz.Unhealthy)
 
-	assertFailedChecker(t, checker)
+	assertCheckerFailed(t, checker)
 }
 
 func TestStatusChecker_SetStatus(t *testing.T) {
@@ -78,7 +77,7 @@ func TestStatusChecker_SetStatus(t *testing.T) {
 
 	checker.SetStatus(healthz.Healthy)
 
-	assertSuccessfulChecker(t, checker)
+	assertCheckerSuccessful(t, checker)
 }
 
 type PingerMock struct {
@@ -92,7 +91,7 @@ func (p *PingerMock) Ping() error {
 func TestPingChecker_Check(t *testing.T) {
 	checker := healthz.NewPingChecker(&PingerMock{})
 
-	assertSuccessfulChecker(t, checker)
+	assertCheckerSuccessful(t, checker)
 }
 
 func TestPingChecker_Check_Fail(t *testing.T) {
@@ -114,7 +113,7 @@ func TestHTTPChecker_Check(t *testing.T) {
 
 	checker := healthz.NewHTTPChecker(ts.URL)
 
-	assertSuccessfulChecker(t, checker)
+	assertCheckerSuccessful(t, checker)
 }
 
 func TestHTTPChecker_Check_Fail(t *testing.T) {
@@ -126,5 +125,5 @@ func TestHTTPChecker_Check_Fail(t *testing.T) {
 
 	checker := healthz.NewHTTPChecker(ts.URL)
 
-	assertFailedChecker(t, checker)
+	assertCheckerFailed(t, checker)
 }
