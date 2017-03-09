@@ -1,13 +1,19 @@
 # A Self-Documenting Makefile: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 
+BINARY_NAME = $(shell go list . | cut -d '/' -f 3)
 GO_SOURCE_FILES = $(shell find . -type f -name "*.go" -not -name "bindata.go" -not -path "./vendor/*")
 GO_PACKAGES = $(shell go list ./... | grep -v /vendor/)
 
-.PHONY: install build build-linux docker check test test-race fmt csfix envcheck help
+.PHONY: setup install clean check test watch-test fmt csfix envcheck help
 .DEFAULT_GOAL := help
+
+setup: envcheck install  ## Setup the project for development
 
 install: ## Install dependencies
 	@glide install
+
+clean: ## Clean the working area
+	rm -rf build/ vendor/
 
 check: test fmt ## Run tests and linters
 
@@ -22,6 +28,15 @@ fmt: ## Check that all source files follow the Coding Style
 
 csfix: ## Fix Coding Standard violations
 	@gofmt -l -w -s ${GO_SOURCE_FILES}
+
+envcheck: ## Check environment for all the necessary requirements
+	$(call executable_check,Go,go)
+	$(call executable_check,Glide,glide)
+	$(call executable_check,Reflex,reflex)
+
+define executable_check
+    @printf "\033[36m%-30s\033[0m %s\n" "$(1)" `if which $(2) > /dev/null 2>&1; then echo "\033[0;32m✓\033[0m"; else echo "\033[0;31m✗\033[0m"; fi`
+endef
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
