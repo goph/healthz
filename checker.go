@@ -107,9 +107,7 @@ type PingChecker struct {
 
 // NewPingChecker creates a new PingChecker with a DB connection
 func NewPingChecker(pinger Pinger) *PingChecker {
-	return &PingChecker{
-		pinger: pinger,
-	}
+	return &PingChecker{pinger}
 }
 
 // Check implements the Checker interface and checks the database status by pinging it
@@ -124,9 +122,7 @@ type HTTPChecker struct {
 
 // NewHTTPChecker creates a new HTTPChecker with a URL
 func NewHTTPChecker(url string) *HTTPChecker {
-	return &HTTPChecker{
-		url: url,
-	}
+	return &HTTPChecker{url}
 }
 
 // Check implements the Checker interface and checks the HTTP endpoint status
