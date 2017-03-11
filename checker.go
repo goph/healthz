@@ -6,12 +6,12 @@ import (
 	"sync"
 )
 
-// ErrCheckFailed is a generic error returned when a check fails
+// ErrCheckFailed is a generic error which MAY BE returned when a check fails
 var ErrCheckFailed = errors.New("Check failed")
 
 // Checker is the interface for checking different resources
 type Checker interface {
-	// Returns nil if the check passes
+	// Check returns nil if the check passes
 	Check() error
 }
 
