@@ -7,6 +7,8 @@ import (
 
 	"errors"
 
+	"net"
+
 	"github.com/sagikazarmark/healthz"
 )
 
@@ -126,4 +128,30 @@ func TestHTTPChecker_Check_Fail(t *testing.T) {
 	checker := healthz.NewHTTPChecker(ts.URL)
 
 	assertCheckerFailed(t, checker)
+}
+
+func TestTCPChecker_Check(t *testing.T) {
+	addr := "127.0.0.1:54321"
+
+	lis, err := net.Listen("tcp", addr)
+	if err != nil {
+		t.Fatalf("Received unexpected error: %+v", err)
+	}
+	defer lis.Close()
+
+	checker := healthz.NewTCPChecker(addr)
+
+	assertCheckerSuccessful(t, checker)
+}
+
+func TestTCPChecker_Check_Fail(t *testing.T) {
+	addr := "127.0.0.1:54321"
+
+	checker := healthz.NewTCPChecker(addr)
+
+	err := checker.Check()
+
+	if err == nil {
+		t.Fatal("Expected error, none received")
+	}
 }

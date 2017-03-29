@@ -2,6 +2,7 @@ package healthz
 
 import (
 	"errors"
+	"net"
 	"net/http"
 	"sync"
 )
@@ -135,6 +136,28 @@ func (c *HTTPChecker) Check() error {
 	if resp.StatusCode != http.StatusOK {
 		return ErrCheckFailed
 	}
+
+	return nil
+}
+
+// TCPChecker checks if something is listening on a TCP port
+type TCPChecker struct {
+	addr string
+}
+
+// NewTCPChecker creates a new TCPChecker with an address
+func NewTCPChecker(addr string) *TCPChecker {
+	return &TCPChecker{addr}
+}
+
+// Check implements the Checker interface and checks the TCP port status
+func (c *TCPChecker) Check() error {
+	conn, err := net.Dial("tcp", c.addr)
+	if err != nil {
+		return err
+	}
+
+	conn.Close()
 
 	return nil
 }
