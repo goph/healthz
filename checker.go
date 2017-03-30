@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"sync"
+	"time"
 )
 
 // ErrCheckFailed is a generic error which MAY BE returned when a check fails
@@ -118,17 +119,22 @@ func (c *PingChecker) Check() error {
 
 // HTTPChecker checks if an HTTP endpoint is available
 type HTTPChecker struct {
-	url string
+	url     string
+	timeout time.Duration
 }
 
 // NewHTTPChecker creates a new HTTPChecker with a URL
-func NewHTTPChecker(url string) *HTTPChecker {
-	return &HTTPChecker{url}
+func NewHTTPChecker(url string, timeout time.Duration) *HTTPChecker {
+	return &HTTPChecker{url, timeout}
 }
 
 // Check implements the Checker interface and checks the HTTP endpoint status
 func (c *HTTPChecker) Check() error {
-	resp, err := http.Get(c.url)
+	client := &http.Client{
+		Timeout: c.timeout,
+	}
+
+	resp, err := client.Get(c.url)
 	if err != nil {
 		return err
 	}

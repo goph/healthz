@@ -1,6 +1,13 @@
 # Change Log
 
 
+## Unreleased
+
+### Added
+
+- HTTP Timeout option
+
+
 ## 0.5.0 - 2017-03-09
 
 ### Changed
