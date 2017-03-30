@@ -1,12 +1,12 @@
 package healthz
 
-// HealthService wraps two Checkers and exposes them as HTTP handlers
+// HealthService wraps two Checkers and exposes them as HTTP handlers.
 type HealthService struct {
 	livenessChecker  Checker
 	readinessChecker Checker
 }
 
-// NewHealthService creates a new HealthService from user configured Checkers
+// NewHealthService creates a new HealthService from user configured Checkers.
 func NewHealthService(livenessChecker Checker, readinessChecker Checker) *HealthService {
 	return &HealthService{
 		livenessChecker:  livenessChecker,
