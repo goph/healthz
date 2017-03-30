@@ -166,17 +166,41 @@ func (c *HTTPChecker) Check() error {
 
 // TCPChecker checks if something is listening on a TCP port
 type TCPChecker struct {
-	addr string
+	addr    string
+	timeout time.Duration
+}
+
+// TCPCheckerOption configures how we check the TCP address
+type TCPCheckerOption func(*TCPChecker)
+
+// WithTCPTimeout returns an TCPCheckerOption that specifies the timeout for TCP requests.
+func WithTCPTimeout(timeout time.Duration) TCPCheckerOption {
+	return func(c *TCPChecker) {
+		c.timeout = timeout
+	}
 }
 
 // NewTCPChecker creates a new TCPChecker with an address
-func NewTCPChecker(addr string) *TCPChecker {
-	return &TCPChecker{addr}
+func NewTCPChecker(addr string, opts ...TCPCheckerOption) *TCPChecker {
+	checker := &TCPChecker{
+		addr: addr,
+	}
+
+	for _, opt := range opts {
+		opt(checker)
+	}
+
+	return checker
 }
 
-// Check implements the Checker interface and checks the TCP port status
+// Check implements the Checker interface and checks the TCP address status
 func (c *TCPChecker) Check() error {
-	conn, err := net.Dial("tcp", c.addr)
+	dialer := net.Dialer{
+		Timeout: c.timeout,
+	}
+
+	conn, err := dialer.Dial("tcp", c.addr)
+
 	if err != nil {
 		return err
 	}

@@ -5,7 +5,9 @@
 
 ### Added
 
+- TCP Checker
 - HTTP Timeout option
+- TCP timeout option
 
 
 ## 0.5.0 - 2017-03-09
