@@ -123,9 +123,27 @@ type HTTPChecker struct {
 	timeout time.Duration
 }
 
+// HTTPCheckerOption configures how we check the HTTP endpoint
+type HTTPCheckerOption func(*HTTPChecker)
+
+// WithHTTPTimeout returns an HTTPCheckerOption that specifies the timeout for HTTP requests.
+func WithHTTPTimeout(timeout time.Duration) HTTPCheckerOption {
+	return func(c *HTTPChecker) {
+		c.timeout = timeout
+	}
+}
+
 // NewHTTPChecker creates a new HTTPChecker with a URL
-func NewHTTPChecker(url string, timeout time.Duration) *HTTPChecker {
-	return &HTTPChecker{url, timeout}
+func NewHTTPChecker(url string, opts ...HTTPCheckerOption) *HTTPChecker {
+	checker := &HTTPChecker{
+		url: url,
+	}
+
+	for _, opt := range opts {
+		opt(checker)
+	}
+
+	return checker
 }
 
 // Check implements the Checker interface and checks the HTTP endpoint status

@@ -115,7 +115,7 @@ func TestHTTPChecker_Check(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := healthz.NewHTTPChecker(ts.URL, 0)
+	checker := healthz.NewHTTPChecker(ts.URL)
 
 	assertCheckerSuccessful(t, checker)
 }
@@ -127,7 +127,7 @@ func TestHTTPChecker_Check_Fail(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := healthz.NewHTTPChecker(ts.URL, 0)
+	checker := healthz.NewHTTPChecker(ts.URL)
 
 	assertCheckerFailed(t, checker)
 }
@@ -140,7 +140,7 @@ func TestHTTPChecker_Check_Timeout(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := healthz.NewHTTPChecker(ts.URL, 15*time.Millisecond)
+	checker := healthz.NewHTTPChecker(ts.URL, healthz.WithHTTPTimeout(15*time.Millisecond))
 
 	assertCheckerSuccessful(t, checker)
 }
@@ -153,7 +153,7 @@ func TestHTTPChecker_Check_Timeout_Fail(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := healthz.NewHTTPChecker(ts.URL, 3*time.Nanosecond)
+	checker := healthz.NewHTTPChecker(ts.URL, healthz.WithHTTPTimeout(3*time.Nanosecond))
 
 	err := checker.Check()
 
