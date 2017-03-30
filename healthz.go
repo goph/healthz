@@ -1,4 +1,3 @@
-// Package healthz provides tools for service health checks
 package healthz
 
 // HealthService wraps two Checkers and exposes them as HTTP handlers
