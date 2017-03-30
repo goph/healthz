@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"sync"
+	"time"
 )
 
 // ErrCheckFailed is a generic error which MAY BE returned when a check fails
@@ -118,17 +119,40 @@ func (c *PingChecker) Check() error {
 
 // HTTPChecker checks if an HTTP endpoint is available
 type HTTPChecker struct {
-	url string
+	url     string
+	timeout time.Duration
+}
+
+// HTTPCheckerOption configures how we check the HTTP endpoint
+type HTTPCheckerOption func(*HTTPChecker)
+
+// WithHTTPTimeout returns an HTTPCheckerOption that specifies the timeout for HTTP requests.
+func WithHTTPTimeout(timeout time.Duration) HTTPCheckerOption {
+	return func(c *HTTPChecker) {
+		c.timeout = timeout
+	}
 }
 
 // NewHTTPChecker creates a new HTTPChecker with a URL
-func NewHTTPChecker(url string) *HTTPChecker {
-	return &HTTPChecker{url}
+func NewHTTPChecker(url string, opts ...HTTPCheckerOption) *HTTPChecker {
+	checker := &HTTPChecker{
+		url: url,
+	}
+
+	for _, opt := range opts {
+		opt(checker)
+	}
+
+	return checker
 }
 
 // Check implements the Checker interface and checks the HTTP endpoint status
 func (c *HTTPChecker) Check() error {
-	resp, err := http.Get(c.url)
+	client := &http.Client{
+		Timeout: c.timeout,
+	}
+
+	resp, err := client.Get(c.url)
 	if err != nil {
 		return err
 	}
@@ -142,17 +166,41 @@ func (c *HTTPChecker) Check() error {
 
 // TCPChecker checks if something is listening on a TCP port
 type TCPChecker struct {
-	addr string
+	addr    string
+	timeout time.Duration
+}
+
+// TCPCheckerOption configures how we check the TCP address
+type TCPCheckerOption func(*TCPChecker)
+
+// WithTCPTimeout returns an TCPCheckerOption that specifies the timeout for TCP requests.
+func WithTCPTimeout(timeout time.Duration) TCPCheckerOption {
+	return func(c *TCPChecker) {
+		c.timeout = timeout
+	}
 }
 
 // NewTCPChecker creates a new TCPChecker with an address
-func NewTCPChecker(addr string) *TCPChecker {
-	return &TCPChecker{addr}
+func NewTCPChecker(addr string, opts ...TCPCheckerOption) *TCPChecker {
+	checker := &TCPChecker{
+		addr: addr,
+	}
+
+	for _, opt := range opts {
+		opt(checker)
+	}
+
+	return checker
 }
 
-// Check implements the Checker interface and checks the TCP port status
+// Check implements the Checker interface and checks the TCP address status
 func (c *TCPChecker) Check() error {
-	conn, err := net.Dial("tcp", c.addr)
+	dialer := net.Dialer{
+		Timeout: c.timeout,
+	}
+
+	conn, err := dialer.Dial("tcp", c.addr)
+
 	if err != nil {
 		return err
 	}
