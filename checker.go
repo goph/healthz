@@ -121,6 +121,7 @@ func (c *PingChecker) Check() error {
 type HTTPChecker struct {
 	url     string
 	timeout time.Duration
+	method  string
 }
 
 // HTTPCheckerOption configures how we check the HTTP endpoint
@@ -133,10 +134,18 @@ func WithHTTPTimeout(timeout time.Duration) HTTPCheckerOption {
 	}
 }
 
+// WithHTTPMethod returns an HTTPCheckerOption that specifies the method for HTTP requests.
+func WithHTTPMethod(method string) HTTPCheckerOption {
+	return func(c *HTTPChecker) {
+		c.method = method
+	}
+}
+
 // NewHTTPChecker creates a new HTTPChecker with a URL
 func NewHTTPChecker(url string, opts ...HTTPCheckerOption) *HTTPChecker {
 	checker := &HTTPChecker{
-		url: url,
+		url:    url,
+		method: http.MethodGet,
 	}
 
 	for _, opt := range opts {
@@ -152,7 +161,12 @@ func (c *HTTPChecker) Check() error {
 		Timeout: c.timeout,
 	}
 
-	resp, err := client.Get(c.url)
+	req, err := http.NewRequest(c.method, c.url, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}

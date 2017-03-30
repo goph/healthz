@@ -162,6 +162,24 @@ func TestHTTPChecker_Check_Timeout_Fail(t *testing.T) {
 	}
 }
 
+func TestHTTPChecker_Check_Method(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodHead {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	}))
+	defer ts.Close()
+
+	checker := healthz.NewHTTPChecker(ts.URL, healthz.WithHTTPMethod(http.MethodHead))
+
+	assertCheckerSuccessful(t, checker)
+}
+
 func TestTCPChecker_Check(t *testing.T) {
 	addr := "127.0.0.1:54321"
 
