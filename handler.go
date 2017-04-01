@@ -3,7 +3,7 @@ package healthz
 import "net/http"
 
 // NewHealthServiceHandler creates an http.Handler from user configured Checkers.
-// The returned handler is a standard http.ServeMux
+// The returned handler is a standard http.ServeMux.
 func NewHealthServiceHandler(livenessChecker Checker, readinessChecker Checker) http.Handler {
 	healthService := NewHealthService(livenessChecker, readinessChecker)
 	mux := http.NewServeMux()

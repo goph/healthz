@@ -1,6 +1,6 @@
 package healthz
 
-// HealthService wraps two Checkers and exposes them as HTTP handlers.
+// HealthService is a helper struct which wraps two Checkers and exposes them as HTTP handlers.
 type HealthService struct {
 	livenessChecker  Checker
 	readinessChecker Checker
