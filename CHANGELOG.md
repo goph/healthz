@@ -1,6 +1,17 @@
 # Change Log
 
 
+## Unreleased
+
+### Added
+
+- Collector to collect checkers during initialization
+
+### Removed
+
+- Hard dependency on liveness and readiness checks
+
+
 ## 0.6.0 - 2017-04-01
 
 ### Added

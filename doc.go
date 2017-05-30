@@ -6,16 +6,28 @@ The easiest way to setup Kubernetes-like liveness and readiness checks:
 	liveness  := healthz.NewTCPChecker(":80")
 	readiness := healthz.NewStatusChecker()
 
-	// Exposes "/healthz" for liveness, "/readiness" for readiness checks
-	handler := healthz.NewHealthServiceHandler(liveness, readiness)
-	http.ListenAndServe(":8081", handler)
+	healthService := healthz.HealthService{
+		healthz.LivenessCheck: liveness,
+		healthz.ReadinessCheck: readiness,
+	}
 
-Setup the health service with custom paths:
+	mux := http.NewServeMux()
+	mux.Handle("/healthz", healthService.Handler(healthz.LivenessCheck))
+	mux.Handle("/readiness", healthService.Handler(healthz.ReadinessCheck))
 
-	liveness  := healthz.NewTCPChecker(":80")
+	http.ListenAndServe(":8081", mux)
+
+Setup the health service using a collector:
+
+	collector := &healthz.Collector{}
+
+	liveness := healthz.NewTCPChecker(":80")
+	collector.RegisterChecker(healthz.LivenessCheck, liveness)
+
 	readiness := healthz.NewStatusChecker()
+	collector.RegisterChecker(healthz.ReadinessCheck, readiness)
 
-	healthService := NewHealthService(livenessChecker, readinessChecker)
+	healthService := collector.NewHealthService()
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/liveness", healthService.HealthStatus)
