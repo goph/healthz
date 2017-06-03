@@ -1,6 +1,13 @@
 # Change Log
 
 
+## Unreleased
+
+### Changed
+
+- Restructured code
+
+
 ## 0.7.0 - 2017-05-31
 
 ### Added
