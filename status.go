@@ -14,22 +14,22 @@ const (
 // StatusChecker checks the status based on an internal state.
 type StatusChecker struct {
 	status Status
-	mu     *sync.Mutex
+	mu     *sync.RWMutex
 }
 
 // NewStatusChecker creates a new StatusChecker with an initial state.
 func NewStatusChecker(status Status) *StatusChecker {
 	return &StatusChecker{
 		status: status,
-		mu:     &sync.Mutex{},
+		mu:     &sync.RWMutex{},
 	}
 }
 
 // Check implements the Checker interface and checks the internal state.
 // Returns an error if the value of state is false.
 func (c *StatusChecker) Check() error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 
 	if c.status == Healthy {
 		return nil

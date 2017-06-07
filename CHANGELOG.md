@@ -6,6 +6,7 @@
 ### Changed
 
 - Restructured code
+- Status checker uses RWMutex
 
 
 ## 0.7.0 - 2017-05-31
