@@ -22,24 +22,6 @@ func assertCheckerFailed(t *testing.T, checker healthz.Checker) {
 	}
 }
 
-func TestCheckers_Check(t *testing.T) {
-	checker1 := new(healthz.AlwaysSuccessChecker)
-	checker2 := new(healthz.AlwaysSuccessChecker)
-
-	checkers := healthz.NewCheckers(checker1, checker2)
-
-	assertCheckerSuccessful(t, checkers)
-}
-
-func TestCheckers_Check_Fail(t *testing.T) {
-	checker1 := new(healthz.AlwaysSuccessChecker)
-	checker2 := new(healthz.AlwaysFailureChecker)
-
-	checkers := healthz.NewCheckers(checker1, checker2)
-
-	assertCheckerFailed(t, checkers)
-}
-
 func TestCheckerFunc_Check(t *testing.T) {
 	checker := healthz.CheckFunc(func() error {
 		return nil

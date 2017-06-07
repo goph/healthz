@@ -7,6 +7,7 @@
 
 - Restructured code
 - Status checker uses RWMutex
+- Renamed `Checkers` to `CompositeChecker`
 
 
 ## 0.7.0 - 2017-05-31
