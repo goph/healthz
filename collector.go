@@ -14,7 +14,11 @@ func (c Collector) NewHealthService() HealthService {
 	healthService := make(HealthService)
 
 	for t, checkers := range c {
-		healthService[t] = NewCompositeChecker(checkers...)
+		if len(checkers) == 1 {
+			healthService[t] = checkers[0]
+		} else {
+			healthService[t] = NewCompositeChecker(checkers...)
+		}
 	}
 
 	return healthService
