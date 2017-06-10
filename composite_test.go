@@ -1,25 +1,23 @@
-package healthz_test
+package healthz
 
 import (
 	"testing"
-
-	"github.com/goph/healthz"
 )
 
 func TestCompositeChecker_Check(t *testing.T) {
-	checker1 := new(healthz.AlwaysSuccessChecker)
-	checker2 := new(healthz.AlwaysSuccessChecker)
+	checker1 := new(AlwaysSuccessChecker)
+	checker2 := new(AlwaysSuccessChecker)
 
-	checkers := healthz.NewCompositeChecker(checker1, checker2)
+	checkers := NewCompositeChecker(checker1, checker2)
 
 	assertCheckerSuccessful(t, checkers)
 }
 
 func TestCompositeChecker_Check_Fail(t *testing.T) {
-	checker1 := new(healthz.AlwaysSuccessChecker)
-	checker2 := new(healthz.AlwaysFailureChecker)
+	checker1 := new(AlwaysSuccessChecker)
+	checker2 := new(AlwaysFailureChecker)
 
-	checkers := healthz.NewCompositeChecker(checker1, checker2)
+	checkers := NewCompositeChecker(checker1, checker2)
 
 	assertCheckerFailed(t, checkers)
 }

@@ -1,12 +1,10 @@
-package healthz_test
+package healthz
 
 import (
 	"testing"
-
-	"github.com/goph/healthz"
 )
 
-func assertCheckerSuccessful(t *testing.T, checker healthz.Checker) {
+func assertCheckerSuccessful(t *testing.T, checker Checker) {
 	err := checker.Check()
 
 	if err != nil {
@@ -14,16 +12,16 @@ func assertCheckerSuccessful(t *testing.T, checker healthz.Checker) {
 	}
 }
 
-func assertCheckerFailed(t *testing.T, checker healthz.Checker) {
+func assertCheckerFailed(t *testing.T, checker Checker) {
 	err := checker.Check()
 
-	if err != healthz.ErrCheckFailed {
+	if err != ErrCheckFailed {
 		t.Fatal("Expected ErrCheckFailed, none received")
 	}
 }
 
 func TestCheckerFunc_Check(t *testing.T) {
-	checker := healthz.CheckFunc(func() error {
+	checker := CheckFunc(func() error {
 		return nil
 	})
 
@@ -31,8 +29,8 @@ func TestCheckerFunc_Check(t *testing.T) {
 }
 
 func TestCheckerFunc_Check_Fail(t *testing.T) {
-	checker := healthz.CheckFunc(func() error {
-		return healthz.ErrCheckFailed
+	checker := CheckFunc(func() error {
+		return ErrCheckFailed
 	})
 
 	assertCheckerFailed(t, checker)

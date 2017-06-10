@@ -1,4 +1,4 @@
-package healthz_test
+package healthz
 
 import (
 	"testing"
@@ -6,14 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-
-	"github.com/goph/healthz"
 )
 
 func TestHealthService_Handler_Success(t *testing.T) {
-	checker := &healthz.AlwaysSuccessChecker{}
+	checker := &AlwaysSuccessChecker{}
 
-	healthService := healthz.HealthService{
+	healthService := HealthService{
 		"test": checker,
 	}
 
@@ -21,22 +19,22 @@ func TestHealthService_Handler_Success(t *testing.T) {
 }
 
 func TestHealthService_Handler_NotFound_Success(t *testing.T) {
-	healthService := healthz.HealthService{}
+	healthService := HealthService{}
 
 	testHealthService(healthService, true, t)
 }
 
 func TestHealthService_Handler_Failure(t *testing.T) {
-	checker := &healthz.AlwaysFailureChecker{}
+	checker := &AlwaysFailureChecker{}
 
-	healthService := healthz.HealthService{
+	healthService := HealthService{
 		"test": checker,
 	}
 
 	testHealthService(healthService, false, t)
 }
 
-func testHealthService(healthService healthz.HealthService, success bool, t *testing.T) {
+func testHealthService(healthService HealthService, success bool, t *testing.T) {
 	ts := httptest.NewServer(healthService.Handler("test"))
 	defer ts.Close()
 

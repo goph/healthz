@@ -1,27 +1,25 @@
-package healthz_test
+package healthz
 
 import (
 	"testing"
-
-	"github.com/goph/healthz"
 )
 
 func TestStatusChecker_Check(t *testing.T) {
-	checker := healthz.NewStatusChecker(healthz.Healthy)
+	checker := NewStatusChecker(Healthy)
 
 	assertCheckerSuccessful(t, checker)
 }
 
 func TestStatusChecker_Check_Fail(t *testing.T) {
-	checker := healthz.NewStatusChecker(healthz.Unhealthy)
+	checker := NewStatusChecker(Unhealthy)
 
 	assertCheckerFailed(t, checker)
 }
 
 func TestStatusChecker_SetStatus(t *testing.T) {
-	checker := healthz.NewStatusChecker(healthz.Unhealthy)
+	checker := NewStatusChecker(Unhealthy)
 
-	checker.SetStatus(healthz.Healthy)
+	checker.SetStatus(Healthy)
 
 	assertCheckerSuccessful(t, checker)
 }
