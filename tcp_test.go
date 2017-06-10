@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/sagikazarmark/healthz"
+	"github.com/goph/healthz"
 )
 
 func TestTCPChecker_Check(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 
 	"errors"
 
-	"github.com/sagikazarmark/healthz"
+	"github.com/goph/healthz"
 )
 
 type PingerMock struct {

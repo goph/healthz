@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"time"
 
-	"github.com/sagikazarmark/healthz"
+	"github.com/goph/healthz"
 )
 
 func TestHTTPChecker_Check(t *testing.T) {

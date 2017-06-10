@@ -1,2 +1,2 @@
-package: github.com/sagikazarmark/healthz
+package: github.com/goph/healthz
 import: []

@@ -3,7 +3,7 @@ package healthz_test
 import (
 	"testing"
 
-	"github.com/sagikazarmark/healthz"
+	"github.com/goph/healthz"
 )
 
 func assertCheckerSuccessful(t *testing.T, checker healthz.Checker) {
