@@ -1,41 +1,28 @@
 package healthz
 
 import (
-	"testing"
-
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 )
 
-func TestHealthService_Handler_Success(t *testing.T) {
+func TestHandler_Handler_Success(t *testing.T) {
 	checker := &AlwaysSuccessChecker{}
+	handler := NewHandler(checker)
 
-	healthService := HealthService{
-		"test": checker,
-	}
-
-	testHealthService(healthService, true, t)
+	testHandler(handler, true, t)
 }
 
-func TestHealthService_Handler_NotFound_Success(t *testing.T) {
-	healthService := HealthService{}
-
-	testHealthService(healthService, true, t)
-}
-
-func TestHealthService_Handler_Failure(t *testing.T) {
+func TestHandler_Handler_Failure(t *testing.T) {
 	checker := &AlwaysFailureChecker{}
+	handler := NewHandler(checker)
 
-	healthService := HealthService{
-		"test": checker,
-	}
-
-	testHealthService(healthService, false, t)
+	testHandler(handler, false, t)
 }
 
-func testHealthService(healthService HealthService, success bool, t *testing.T) {
-	ts := httptest.NewServer(healthService.Handler("test"))
+func testHandler(handler http.Handler, success bool, t *testing.T) {
+	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
 	res, err := http.Get(ts.URL)

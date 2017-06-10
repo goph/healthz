@@ -10,7 +10,15 @@ func TestCollector_RegisterChecker(t *testing.T) {
 
 	collector.RegisterChecker("test", checker)
 
-	healthService := collector.NewHealthService()
+	handler := collector.Handler("test")
 
-	testHealthService(healthService, true, t)
+	testHandler(handler, true, t)
+}
+
+func TestCollector_Handler_NotFound_Success(t *testing.T) {
+	collector := make(Collector)
+
+	handler := collector.Handler("not_found")
+
+	testHandler(handler, true, t)
 }

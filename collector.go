@@ -1,5 +1,7 @@
 package healthz
 
+import "net/http"
+
 // Collector is a global context structure to accept checkers from all kinds of sources.
 // It aggregates them and returns a HealthService.
 type Collector map[string][]Checker
@@ -9,17 +11,17 @@ func (c Collector) RegisterChecker(check string, checker Checker) {
 	c[check] = append(c[check], checker)
 }
 
-// NewHealthService aggregates the checkers and returns a new HealthService.
-func (c Collector) NewHealthService() HealthService {
-	healthService := make(HealthService)
-
-	for t, checkers := range c {
-		if len(checkers) == 1 {
-			healthService[t] = checkers[0]
-		} else {
-			healthService[t] = NewCompositeChecker(checkers...)
-		}
+// Handler returns an http.Handler for a check.
+// If a check is not found the returned handler will always return success.
+func (c Collector) Handler(check string) http.Handler {
+	checkers, ok := c[check]
+	if !ok {
+		return NewHandler(&AlwaysSuccessChecker{})
 	}
 
-	return healthService
+	if len(checkers) == 1 {
+		return NewHandler(checkers[0])
+	}
+
+	return NewHandler(NewCompositeChecker(checkers...))
 }

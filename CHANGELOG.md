@@ -1,6 +1,18 @@
 # Change Log
 
 
+## Unreleased
+
+### Added
+
+- Separate `http.Handler` implementation for checkers
+- Way to retrieve handler directly from the collector
+
+### Removed
+
+- Health service (replaced by Collector and Handler)
+
+
 ## 0.8.0 - 2017-06-08
 
 ### Changed
