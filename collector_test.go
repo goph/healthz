@@ -1,12 +1,14 @@
-package healthz
+package healthz_test
 
 import (
 	"testing"
+
+	"github.com/goph/healthz"
 )
 
 func TestCollector_RegisterChecker(t *testing.T) {
-	checker := &AlwaysSuccessChecker{}
-	collector := make(Collector)
+	checker := &healthz.AlwaysSuccessChecker{}
+	collector := make(healthz.Collector)
 
 	collector.RegisterChecker("test", checker)
 
@@ -16,7 +18,7 @@ func TestCollector_RegisterChecker(t *testing.T) {
 }
 
 func TestCollector_Handler_NotFound_Success(t *testing.T) {
-	collector := make(Collector)
+	collector := make(healthz.Collector)
 
 	handler := collector.Handler("not_found")
 

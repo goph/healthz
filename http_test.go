@@ -1,4 +1,4 @@
-package healthz
+package healthz_test
 
 import (
 	"testing"
@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"time"
+
+	"github.com/goph/healthz"
 )
 
 func TestHTTPChecker_Check(t *testing.T) {
@@ -15,7 +17,7 @@ func TestHTTPChecker_Check(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := NewHTTPChecker(ts.URL)
+	checker := healthz.NewHTTPChecker(ts.URL)
 
 	assertCheckerSuccessful(t, checker)
 }
@@ -27,7 +29,7 @@ func TestHTTPChecker_Check_Fail(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := NewHTTPChecker(ts.URL)
+	checker := healthz.NewHTTPChecker(ts.URL)
 
 	assertCheckerFailed(t, checker)
 }
@@ -40,7 +42,7 @@ func TestHTTPChecker_Check_Timeout(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := NewHTTPChecker(ts.URL, WithHTTPTimeout(15*time.Millisecond))
+	checker := healthz.NewHTTPChecker(ts.URL, healthz.WithHTTPTimeout(15*time.Millisecond))
 
 	assertCheckerSuccessful(t, checker)
 }
@@ -53,7 +55,7 @@ func TestHTTPChecker_Check_Timeout_Fail(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := NewHTTPChecker(ts.URL, WithHTTPTimeout(3*time.Nanosecond))
+	checker := healthz.NewHTTPChecker(ts.URL, healthz.WithHTTPTimeout(3*time.Nanosecond))
 
 	err := checker.Check()
 
@@ -75,7 +77,7 @@ func TestHTTPChecker_Check_Method(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	checker := NewHTTPChecker(ts.URL, WithHTTPMethod(http.MethodHead))
+	checker := healthz.NewHTTPChecker(ts.URL, healthz.WithHTTPMethod(http.MethodHead))
 
 	assertCheckerSuccessful(t, checker)
 }

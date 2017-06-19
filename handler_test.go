@@ -1,22 +1,25 @@
-package healthz
+package healthz_test
 
 import (
+	"testing"
+
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"testing"
+
+	"github.com/goph/healthz"
 )
 
 func TestHandler_Handler_Success(t *testing.T) {
-	checker := &AlwaysSuccessChecker{}
-	handler := NewHandler(checker)
+	checker := &healthz.AlwaysSuccessChecker{}
+	handler := healthz.NewHandler(checker)
 
 	testHandler(handler, true, t)
 }
 
 func TestHandler_Handler_Failure(t *testing.T) {
-	checker := &AlwaysFailureChecker{}
-	handler := NewHandler(checker)
+	checker := &healthz.AlwaysFailureChecker{}
+	handler := healthz.NewHandler(checker)
 
 	testHandler(handler, false, t)
 }
