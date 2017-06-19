@@ -1,10 +1,12 @@
-package healthz
+package healthz_test
 
 import (
 	"testing"
 
 	"net"
 	"time"
+
+	"github.com/goph/healthz"
 )
 
 func TestTCPChecker_Check(t *testing.T) {
@@ -16,7 +18,7 @@ func TestTCPChecker_Check(t *testing.T) {
 	}
 	defer lis.Close()
 
-	checker := NewTCPChecker(addr)
+	checker := healthz.NewTCPChecker(addr)
 
 	assertCheckerSuccessful(t, checker)
 }
@@ -24,7 +26,7 @@ func TestTCPChecker_Check(t *testing.T) {
 func TestTCPChecker_Check_Fail(t *testing.T) {
 	addr := "127.0.0.1:54321"
 
-	checker := NewTCPChecker(addr)
+	checker := healthz.NewTCPChecker(addr)
 
 	err := checker.Check()
 
@@ -42,7 +44,7 @@ func TestTCPChecker_Check_Timeout(t *testing.T) {
 	}
 	defer lis.Close()
 
-	checker := NewTCPChecker(addr, WithTCPTimeout(15*time.Millisecond))
+	checker := healthz.NewTCPChecker(addr, healthz.WithTCPTimeout(15*time.Millisecond))
 
 	assertCheckerSuccessful(t, checker)
 }
@@ -56,7 +58,7 @@ func TestTCPChecker_Check_Timeout_Fail(t *testing.T) {
 	}
 	lis.Close()
 
-	checker := NewTCPChecker(addr, WithTCPTimeout(3*time.Nanosecond))
+	checker := healthz.NewTCPChecker(addr, healthz.WithTCPTimeout(3*time.Nanosecond))
 
 	err = checker.Check()
 

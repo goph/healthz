@@ -1,9 +1,11 @@
-package healthz
+package healthz_test
 
 import (
 	"testing"
 
 	"errors"
+
+	"github.com/goph/healthz"
 )
 
 type PingerMock struct {
@@ -15,13 +17,13 @@ func (p *PingerMock) Ping() error {
 }
 
 func TestPingChecker_Check(t *testing.T) {
-	checker := NewPingChecker(&PingerMock{})
+	checker := healthz.NewPingChecker(&PingerMock{})
 
 	assertCheckerSuccessful(t, checker)
 }
 
 func TestPingChecker_Check_Fail(t *testing.T) {
-	checker := NewPingChecker(&PingerMock{errors.New("ping failed")})
+	checker := healthz.NewPingChecker(&PingerMock{errors.New("ping failed")})
 
 	err := checker.Check()
 
